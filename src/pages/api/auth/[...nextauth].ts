@@ -11,20 +11,23 @@ export default NextAuth({
       scope: 'read:user'
     }),
   ],
+
   callbacks: {
     async signIn(user) {
       const {email} = user
-
-      await fauna.query(
-        q.Create(
-          q.Collection('users'),
-          {data: {email}}
+      try {
+        await fauna.query(
+          q.Create(
+            q.Collection('users'),
+            {data: {email}}
+          )
         )
-      )
-
-      return true;
+        return true
+      } 
+      catch {
+        return false
+      }
     }
-
   },
   
   database: process.env.DATABASE_URL,
